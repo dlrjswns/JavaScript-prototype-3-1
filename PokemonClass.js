@@ -1,17 +1,3 @@
-function createPokemon (name, type) { // 타입마다 다른 포켓몬을 생성해야하므로 팩토리패턴을 이용해주었다
-    if(type == '물') {
-        return new WaterPokemon(name)
-    }
-    else if(type == '불') {
-        return new FirePokemon(name);
-    }
-    else if(type == '풀') {
-        return new GrassPokemon(name);
-    }
-    else if(type == '전기') {
-        return new ElectricPokemon(name);
-    }
-}
 
 class Pokemon {
     constructor(name) {
@@ -20,6 +6,21 @@ class Pokemon {
         this.skill = ['삐지기', '도망가기', '지침', '잠자기'];
         this.cost = function() {
             return 0;
+        }
+    }
+
+    static createPokemon(name, type) { // 타입마다 다른 포켓몬을 생성해야하므로 팩토리패턴을 이용해주었다
+        if(type == '물') {
+            return new WaterPokemon(name)
+        }
+        else if(type == '불') {
+            return new FirePokemon(name);
+        }
+        else if(type == '풀') {
+            return new GrassPokemon(name);
+        }
+        else if(type == '전기') {
+            return new ElectricPokemon(name);
         }
     }
 
@@ -200,10 +201,91 @@ class 개인훈련장 {
     }
 }
 
-const 이건준 = new Pokemon('이건준');
-const 이상해씨 = createPokemon('이상해씨', '풀');
-const 파이리 = createPokemon('파이리', '불');
-const 꼬부기 = createPokemon('꼬부기', '물');
+// 템플릿 패턴
+class Evolution {
+    constructor (pokemon) {
+        this.pokemon = pokemon;
+        this.진화하다 = function() {
+        this.정신집중하다();
+        this.진화의돌을사용하다();
+        this.궁극체포켓몬으로변하다();
+        }
+    
+        this.정신집중하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 정신을 집중하는중입니다.');
+        }
+
+        this.진화의돌을사용하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [진화의 돌]을 사용합니다.');
+        }
+
+        this.궁극체포켓몬으로변하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 궁극체포켓몬으로 변합니다.');
+        }
+    }
+}
+
+class FireEvolution extends Evolution{
+    constructor (pokemon) {
+        super(pokemon);
+        this.pokemon = pokemon;
+        this.진화의돌을사용하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [불꽃의 돌]을 사용합니다.');
+        }
+
+        this.궁극체포켓몬으로변하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [리자몽]으로 진화합니다.');
+        }
+    }
+}
+
+class WaterEvolution extends Evolution{
+    constructor (pokemon) {
+        super(pokemon);
+        this.pokemon = pokemon;
+        this.진화의돌을사용하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [물의 돌]을 사용합니다.');
+        }
+    
+        this.궁극체포켓몬으로변하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [거북왕]으로 진화합니다.');
+        }
+    }
+}
+
+class GrassEvolution extends Evolution{
+    constructor (pokemon) {
+        super(pokemon);
+        this.pokemon = pokemon;
+        this.진화의돌을사용하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [풀의 돌]을 사용합니다.');
+        }
+
+        this.궁극체포켓몬으로변하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [이상해꽃]으로 진화합니다.');
+        }
+    }
+}
+
+class ElectricEvolution extends Evolution{
+    constructor (pokemon) {
+        super(pokemon);
+        this.pokemon = pokemon;
+        this.진화의돌을사용하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [천둥의 돌]을 사용합니다.');
+        }
+
+        this.궁극체포켓몬으로변하다 = function() {
+            console.log('[' + this.pokemon.name + ']가 [라이츄]으로 진화합니다.');
+        }
+    }
+}
+
+
+const 피카츄 = Pokemon.createPokemon('피카츄', '전기');
+const 이상해씨 = Pokemon.createPokemon('이상해씨', '풀');
+const 파이리 = Pokemon.createPokemon('파이리', '불');
+const 꼬부기 = Pokemon.createPokemon('꼬부기', '물');
 
   console.log('————————훈련장————————');
   const 금빛체육관 = new 개인훈련장(이상해씨);
@@ -223,3 +305,18 @@ new 불꽃의돌(파이리);
 new 물의돌(파이리);
 new 천둥의돌(파이리);
 console.log('구매한 총 가격: ' + 파이리.cost()+' Gold');
+
+console.log('———————포켓몬 진화———————');
+var 파이리진화 = new FireEvolution(파이리);
+var 꼬부기진화 = new WaterEvolution(꼬부기);
+var 이상해씨진화 = new GrassEvolution(이상해씨);
+var 피카츄진화 = new ElectricEvolution(피카츄);
+
+console.log('[파이리] -> [리자몽]');
+파이리진화.진화하다();
+console.log('[꼬부기] -> [거북왕]');
+꼬부기진화.진화하다();
+console.log('[이상해씨] -> [이상해꽃]');
+이상해씨진화.진화하다();
+console.log('[피카츄] -> [라이츄]');
+피카츄진화.진화하다();
