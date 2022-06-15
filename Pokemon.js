@@ -1,4 +1,13 @@
-var createPokemon = function(name, type) { // 타입마다 다른 포켓몬을 생성해야하므로 팩토리패턴을 이용해주었다
+var Pokemon = function(name) {
+    this.name = name;
+    this.type = '무속성';
+    this.skill = ['삐지기', '도망가기', '지침', '잠자기']; // 타입을 가지고있지않은 포켓몬을 생성할 경우 아무런 능력을 가지지못합니다
+    this.cost = function() { // 어떤 타입이냐에 따라서 포켓몬의 가치가 달라지게된다, 타입이 존재하지않은 경우는 0
+        return 0;
+    }
+}
+
+Pokemon.createPokemon = function(name, type) { // 타입마다 다른 포켓몬을 생성해야하므로 팩토리패턴을 이용해주었다
     if(type == '물') {
         return new WaterPokemon(name)
     }
@@ -13,13 +22,16 @@ var createPokemon = function(name, type) { // 타입마다 다른 포켓몬을 �
     }
 }
 
-var Pokemon = function(name) {
-    this.name = name;
-    this.type = '무속성';
-    this.skill = ['삐지기', '도망가기', '지침', '잠자기']; // 타입을 가지고있지않은 포켓몬을 생성할 경우 아무런 능력을 가지지못합니다
-    this.cost = function() { // 어떤 타입이냐에 따라서 포켓몬의 가치가 달라지게된다, 타입이 존재하지않은 경우는 0
-        return 0;
-    }
+Pokemon.prototype.who = function() {
+    console.log('[' + this.name + ']는 ' + this.type + '타입이고 [' + this.skill + '] 스킬을 사용할 수 있습니다.');
+}
+
+Pokemon.prototype.포켓볼에서나오다 = function() {
+    console.log('[' + this.name + ']가 포켓볼에서 나왔습니다.');
+}
+
+Pokemon.prototype.포켓볼에들어가다 = function() {
+    console.log('[' + this.name + ']가 포켓볼에 들어갔습니다.');
 }
 
 // 포켓몬에 진화의돌을 부여할 수 있도록 구매가능하고 원하는것을 자유롭게 구매할 수 있도록 Decorator패턴을 이용해보았습니다
@@ -46,21 +58,6 @@ var 천둥의돌 = function(pokemon) {
         return cost + 100;
     }
 }
-
-Pokemon.prototype.who = function() {
-    console.log('[' + this.name + ']는 ' + this.type + '타입이고 [' + this.skill + '] 스킬을 사용할 수 있습니다.');
-}
-
-Pokemon.prototype.포켓볼에서나오다 = function() {
-    console.log('[' + this.name + ']가 포켓볼에서 나왔습니다.');
-}
-
-Pokemon.prototype.포켓볼에들어가다 = function() {
-    console.log('[' + this.name + ']가 포켓볼에 들어갔습니다.');
-}
-
-// 포켓몬은 스킬을 여러개 보유하고 있으므로 prototype을 Array 생성자 함수의 prototype을 참조하게 한다.
-// PokemonSkill.prototype = Object.create(Array.prototype);
 
 var ElectricPokemon = function(name) {
     Pokemon.call(this); // 부모인 Pokemon을 불러 초기화시켜준다
@@ -160,7 +157,7 @@ var 개인훈련장 = (function() {
     }
 
     개인훈련장.prototype.정신력강화하기 = function() {
-        console.log('정신력 강화중...---------------------');
+        console.log('정신력 강화중...');
         this.pokemon.포켓볼에서나오다();
         this.하체운동.스쿼트하기();
         this.가슴운동.벤치프레스하기();
@@ -168,7 +165,7 @@ var 개인훈련장 = (function() {
     }
 
     개인훈련장.prototype.스트렝스훈련하기 = function() {
-        console.log('스트렝스 강화중...--------------------');
+        console.log('스트렝스 강화중...');
         this.pokemon.포켓볼에서나오다();
         this.팔운동.이두컬하기();
         this.하체운동.스쿼트하기();
@@ -177,7 +174,7 @@ var 개인훈련장 = (function() {
     }
 
     개인훈련장.prototype.스킬강화하기 = function() {
-        console.log('스킬 강화중...----------------------');
+        console.log('스킬 강화중...');
         this.pokemon.포켓볼에서나오다();
         this.어깨운동.숄더프레스하기();
         this.가슴운동.벤치프레스하기();
@@ -261,28 +258,23 @@ var 개인훈련장 = (function() {
   GrassEvolution.prototype = new Evolution();
   ElectricEvolution.prototype = new Evolution();
 
-  var 피카츄 = createPokemon('피카츄', '전기');
-  var 이상해씨 = createPokemon('이상해씨', '풀');
-  var 파이리 = createPokemon('파이리', '불');
-  var 꼬부기 = createPokemon('꼬부기', '물');
+  var 피카츄 = Pokemon.createPokemon('피카츄', '전기');
+  var 이상해씨 = Pokemon.createPokemon('이상해씨', '풀');
+  var 파이리 = Pokemon.createPokemon('파이리', '불');
+  var 꼬부기 = Pokemon.createPokemon('꼬부기', '물');
 
+  console.log('---------------포켓몬 정보---------------');
+  이상해씨.who();
+  파이리.who();
+  꼬부기.who();
+  피카츄.who();
   console.log('-----------------훈련장-----------------');
   var 금빛체육관 = new 개인훈련장(이상해씨);
   금빛체육관.정신력강화하기();
   금빛체육관.스트렝스훈련하기();
   금빛체육관.스킬강화하기();
-  
-  
-  console.log('---------------포켓몬 정보---------------');
-  이상해씨.who();
-  파이리.who();
-  꼬부기.who();
   console.log('-------------------------------------');
 
-//   드레스(파이리);
-//   니트(파이리);
-//   운동화(파이리);
-//   파이리.wear();
 불꽃의돌(파이리);
 물의돌(파이리);
 천둥의돌(파이리);
