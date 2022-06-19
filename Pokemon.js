@@ -2,9 +2,6 @@ var Pokemon = function(name) {
     this.name = name;
     this.type = '무속성';
     this.skill = ['삐지기', '도망가기', '지침', '잠자기']; // 타입을 가지고있지않은 포켓몬을 생성할 경우 아무런 능력을 가지지못합니다
-    this.cost = function() { // 어떤 타입이냐에 따라서 포켓몬의 가치가 달라지게된다, 타입이 존재하지않은 경우는 0
-        return 0;
-    }
 }
 
 Pokemon.createPokemon = function(name, type) { // 타입마다 다른 포켓몬을 생성해야하므로 팩토리패턴을 이용해주었다
@@ -34,30 +31,87 @@ Pokemon.prototype.포켓볼에들어가다 = function() {
     console.log('[' + this.name + ']가 포켓볼에 들어갔습니다.');
 }
 
-// 포켓몬에 진화의돌을 부여할 수 있도록 구매가능하고 원하는것을 자유롭게 구매할 수 있도록 Decorator패턴을 이용해보았습니다
-var 불꽃의돌 = function(pokemon) {
-    var cost = pokemon.cost();
-    pokemon.cost = function() {
-        console.log('[' + pokemon.name + ']가 [불꽃의 돌]을 구매하였습니다.');
-        return cost + 100;
+// 진화의돌을 만들기위해 반드시 진화의초석이 필요하고 이곳에 여러 기운들을 넣어 원하는 진화의돌을 만들 수 있게 Decorator패턴을 이용해보았습니다
+var EvolutionCornerStone = function() {
+    this.getCost = function() {
+        return 1.0;
+    }
+
+    this.getIngredients = function() {
+        return "진화의초석"
     }
 }
 
-var 물의돌 = function(pokemon) {
-    var cost = pokemon.cost();
-    pokemon.cost = function() {
-        console.log('[' + pokemon.name + ']가 [물의 돌]을 구매하였습니다.');
-        return cost + 100;
+var EvolutionIngredient = function(evolutionCornerStone) {
+    EvolutionCornerStone.call(this);
+    this.evolutionCornerStone = evolutionCornerStone
+    this.getCost = function() {
+        return this.evolutionCornerStone.getCost();
+    }
+
+    this.getIngredients = function() {
+        return this.evolutionCornerStone.getIngredients();
+    }
+
+    this.toString = function() {
+        return 'Cost : ' + this.getCost() + '\nIngredients : ' + this.getIngredients();
     }
 }
 
-var 천둥의돌 = function(pokemon) {
-    var cost = pokemon.cost();
-    pokemon.cost = function() {
-        console.log('[' + pokemon.name + ']가 [천둥의 돌]을 구매하였습니다.');
-        return cost + 100;
+var StrengthOfFlame = function(evolutionCornerStone) {
+    EvolutionIngredient.call(this, evolutionCornerStone);
+    // this.evolutionCornerStone = evolutionCornerStone;
+
+    this.getCost = function() {
+        return evolutionCornerStone.getCost() + 0.5;
+    }
+
+    this.getIngredients = function() {
+        return evolutionCornerStone.getIngredients() + ', 불꽃의기운';
     }
 }
+
+var StrengthOfThunder = function(evolutionCornerStone) {
+    EvolutionIngredient.call(this, evolutionCornerStone);
+
+    this.getCost = function() {
+        return evolutionCornerStone.getCost() + 1.2;
+    }
+
+    this.getIngredients = function() {
+        return evolutionCornerStone.getIngredients() + ', 천둥의기운';
+    }
+}
+
+var StrengthOfWater = function(evolutionCornerStone) {
+    EvolutionIngredient.call(this, evolutionCornerStone);
+
+    this.getCost = function() {
+        return evolutionCornerStone.getCost() + 2.3;
+    }
+
+    this.getIngredients = function() {
+        return evolutionCornerStone.getIngredients() + ', 물의기운';
+    }
+}
+
+var StrengthOfGrass = function(evolutionCornerStone) {
+    EvolutionIngredient.call(this, evolutionCornerStone);
+
+    this.getCost = function() {
+        return evolutionCornerStone.getCost() + 3.0;
+    }
+
+    this.getIngredients = function() {
+        return evolutionCornerStone.getIngredients() + ', 풀의기운';
+    }
+}
+
+EvolutionIngredient.prototype = new EvolutionCornerStone();
+StrengthOfFlame.prototype = new EvolutionIngredient();
+StrengthOfThunder.prototype = new EvolutionIngredient();
+StrengthOfWater.prototype = new EvolutionIngredient();
+StrengthOfGrass.prototype = new EvolutionIngredient();
 
 var ElectricPokemon = function(name) {
     Pokemon.call(this); // 부모인 Pokemon을 불러 초기화시켜준다
@@ -275,10 +329,17 @@ var 개인훈련장 = (function() {
   금빛체육관.스킬강화하기();
   console.log('-------------------------------------');
 
-불꽃의돌(파이리);
-물의돌(파이리);
-천둥의돌(파이리);
-console.log('구매한 총 가격: ' + 파이리.cost()+' Gold');
+  var 진화의초석 = new EvolutionCornerStone();
+  var 불꽃의돌 = new StrengthOfFlame(진화의초석);
+  var 천둥의돌 = new StrengthOfThunder(진화의초석);
+  var 물의돌 = new StrengthOfWater(진화의초석);
+  var 풀의돌 = new StrengthOfGrass(진화의초석);
+  var 불꽃과천둥의돌 = new StrengthOfFlame(new StrengthOfThunder(진화의초석));
+  console.log(불꽃과천둥의돌.toString());
+//   console.log(천둥의돌.toString());
+//   console.log(물의돌.toString());
+//   console.log(풀의돌.toString());
+
 console.log('---------------포켓몬 진화---------------');
 var 파이리진화 = new FireEvolution(파이리);
 var 꼬부기진화 = new WaterEvolution(꼬부기);

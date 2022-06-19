@@ -4,9 +4,6 @@ class Pokemon {
         this.name = name;
         this.type = '무속성';
         this.skill = ['삐지기', '도망가기', '지침', '잠자기'];
-        this.cost = function() {
-            return 0;
-        }
     }
 
     static createPokemon(name, type) { // 타입마다 다른 포켓몬을 생성해야하므로 팩토리패턴을 이용해주었다
@@ -37,33 +34,74 @@ class Pokemon {
     }
 }
 
-class 불꽃의돌 {
-    constructor(pokemon) {
-        var cost = pokemon.cost();
-        pokemon.cost = function() {
-            console.log(pokemon.name + '가 불꽃의 돌을 구매하였습니다.');
-            return cost + 100;
-        }
+// 진화의돌을 만들기위해 반드시 진화의초석이 필요하고 이곳에 여러 기운들을 넣어 원하는 진화의돌을 만들 수 있게 Decorator패턴을 이용해보았습니다
+// 진화의돌을 만들기위해 반드시 필요한 진화의초석
+class EvolutionCornerStone {
+    getCost() {
+        return 1.0;
+    }
+
+    getIngredients() {
+        return '진화의초석';
     }
 }
 
-class 물의돌 {
-    constructor(pokemon) {
-        var cost = pokemon.cost();
-        pokemon.cost = function() {
-            console.log(pokemon.name + '가 물의 돌을 구매하였습니다.');
-            return cost + 100;
-        }
+class EvolutionIngredient extends EvolutionCornerStone { // 진화의 재료를 가지고 진화의초석에 추가해줄 수 있다
+    constructor(evolutionCornerStone) {
+        super();
+        this.evolutionCornerStone = evolutionCornerStone;
+    }
+
+    getCost() {
+        return this.evolutionCornerStone.getCost();
+    }
+
+    getIngredients() {
+        return this.evolutionCornerStone.getIngredients();
+    }
+
+    toString() {
+        return 'Cost : ' + this.getCost() + '\nIngredients : ' + this.getIngredients();
+    }
+} 
+
+class StrengthOfFlame extends EvolutionIngredient {
+    getCost() {
+        return super.getCost() + 0.5;
+    }
+
+    getIngredients() {
+        return super.getIngredients() + ', 불꽃의기운';
     }
 }
 
-class 천둥의돌 {
-    constructor(pokemon) {
-        var cost = pokemon.cost();
-        pokemon.cost = function() {
-            console.log(pokemon.name + '가 천둥의 돌을 구매하였습니다.');
-            return cost + 100;
-        }    
+class StrengthOfThunder extends EvolutionIngredient {
+    getCost() {
+        return super.getCost() + 1.2;
+    }
+
+    getIngredients() {
+        return super.getIngredients() + ', 천둥의기운';
+    }
+}
+
+class StrengthOfWater extends EvolutionIngredient {
+    getCost() {
+        return super.getCost() + 2.3;
+    }
+
+    getIngredients() {
+        return super.getIngredients() + ', 물의기운';
+    }
+}
+
+class StrengthOfGrass extends EvolutionIngredient {
+    getCost() {
+        return super.getCost() + 3.0;
+    }
+
+    getIngredients() {
+        return super.getIngredients() + ', 풀의기운';
     }
 }
 
@@ -280,43 +318,3 @@ class ElectricEvolution extends Evolution{
         }
     }
 }
-
-
-const 피카츄 = Pokemon.createPokemon('피카츄', '전기');
-const 이상해씨 = Pokemon.createPokemon('이상해씨', '풀');
-const 파이리 = Pokemon.createPokemon('파이리', '불');
-const 꼬부기 = Pokemon.createPokemon('꼬부기', '물');
-
-  console.log('————————훈련장————————');
-  const 금빛체육관 = new 개인훈련장(이상해씨);
-  금빛체육관.정신력강화하기();
-  금빛체육관.스트렝스훈련하기();
-  금빛체육관.스킬강화하기();
-  
-  
-  console.log('———————포켓몬 정보———————');
-  이상해씨.who();
-  파이리.who();
-  꼬부기.who();
-  console.log('——————————————————');
-
-
-new 불꽃의돌(파이리);
-new 물의돌(파이리);
-new 천둥의돌(파이리);
-console.log('구매한 총 가격: ' + 파이리.cost()+' Gold');
-
-console.log('———————포켓몬 진화———————');
-var 파이리진화 = new FireEvolution(파이리);
-var 꼬부기진화 = new WaterEvolution(꼬부기);
-var 이상해씨진화 = new GrassEvolution(이상해씨);
-var 피카츄진화 = new ElectricEvolution(피카츄);
-
-console.log('[파이리] -> [리자몽]');
-파이리진화.진화하다();
-console.log('[꼬부기] -> [거북왕]');
-꼬부기진화.진화하다();
-console.log('[이상해씨] -> [이상해꽃]');
-이상해씨진화.진화하다();
-console.log('[피카츄] -> [라이츄]');
-피카츄진화.진화하다();
