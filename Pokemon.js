@@ -54,13 +54,12 @@ var EvolutionIngredient = function(evolutionCornerStone) {
     }
 
     this.toString = function() {
-        return 'Cost : ' + this.getCost() + '\nIngredients : ' + this.getIngredients();
+        return 'Cost : ' + this.getCost() + '\nIngredients : ' + this.getIngredients() + '\n';
     }
 }
 
 var StrengthOfFlame = function(evolutionCornerStone) {
     EvolutionIngredient.call(this, evolutionCornerStone);
-    // this.evolutionCornerStone = evolutionCornerStone;
 
     this.getCost = function() {
         return evolutionCornerStone.getCost() + 0.5;
@@ -107,6 +106,7 @@ var StrengthOfGrass = function(evolutionCornerStone) {
     }
 }
 
+// 진화재료는 진화의초석을 상속받고 나머지 여러 타입의 기운들은 진화재료를 상속받습니다
 EvolutionIngredient.prototype = new EvolutionCornerStone();
 StrengthOfFlame.prototype = new EvolutionIngredient();
 StrengthOfThunder.prototype = new EvolutionIngredient();
@@ -118,9 +118,6 @@ var ElectricPokemon = function(name) {
     this.name = name;
     this.skill = ['백만볼트', '번개후리기', '전광석화', '천만볼트'];
     this.type = '전기';
-    this.cost = function() {
-        return 100;
-    }
 }
 
 var FirePokemon = function(name) {
@@ -128,9 +125,6 @@ var FirePokemon = function(name) {
     this.name = name;
     this.skill = ['불 갈기기', '화염방사', '회오리불꽃', '베어가르기'];
     this.type = '불';
-    this.cost = function() {
-        return 200;
-    }
 }
 
 var WaterPokemon = function(name) {
@@ -138,9 +132,6 @@ var WaterPokemon = function(name) {
     this.name = name;
     this.skill = ['몸통 박치기', '물대포', '냉동빔', '거품광선'];
     this.type = '물';
-    this.cost = function() {
-        return 300;
-    }
 }
 
 var GrassPokemon = function(name) {
@@ -148,9 +139,6 @@ var GrassPokemon = function(name) {
     this.name = name;
     this.skill = ['씨뿌리기', '덩굴채찍', '울음소리', '몸통 박치기'];
     this.type = '풀';
-    this.cost = function() {
-        return 400;
-    }
 }
 
 // 각각의 타입을 가지는 포켓몬은 Pokemon을 상속받는다
@@ -331,14 +319,13 @@ var 개인훈련장 = (function() {
 
   var 진화의초석 = new EvolutionCornerStone();
   var 불꽃의돌 = new StrengthOfFlame(진화의초석);
-  var 천둥의돌 = new StrengthOfThunder(진화의초석);
   var 물의돌 = new StrengthOfWater(진화의초석);
-  var 풀의돌 = new StrengthOfGrass(진화의초석);
+  var 풀과천둥의돌 = new StrengthOfGrass(new StrengthOfThunder(진화의초석));
   var 불꽃과천둥의돌 = new StrengthOfFlame(new StrengthOfThunder(진화의초석));
   console.log(불꽃과천둥의돌.toString());
-//   console.log(천둥의돌.toString());
-//   console.log(물의돌.toString());
-//   console.log(풀의돌.toString());
+  console.log(풀과천둥의돌.toString());
+  console.log(불꽃의돌.toString());
+  console.log(물의돌.toString());
 
 console.log('---------------포켓몬 진화---------------');
 var 파이리진화 = new FireEvolution(파이리);

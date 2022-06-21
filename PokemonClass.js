@@ -111,9 +111,6 @@ class ElectricPokemon extends Pokemon {
         this.name = name;
         this.skill = ['백만볼트', '번개후리기', '전광석화', '천만볼트'];
         this.type = '전기';
-        this.cost = function() {
-            return 100;
-        }
     }
 }
 
@@ -123,9 +120,6 @@ class FirePokemon extends Pokemon {
         this.name = name;
         this.skill = ['불 갈기기', '화염방사', '회오리불꽃', '베어가르기'];
         this.type = '불';
-        this.cost = function() {
-            return 200;
-        }
     }
 }
 
@@ -135,9 +129,6 @@ class WaterPokemon extends Pokemon {
         this.name = name;
         this.skill = ['몸통 박치기', '물대포', '냉동빔', '거품광선'];
         this.type = '물';
-        this.cost = function() {
-            return 300;
-        }
     }
 }
 
@@ -147,9 +138,6 @@ class GrassPokemon extends Pokemon {
         this.name = name;
         this.skill = ['씨뿌리기', '덩굴채찍', '울음소리', '몸통 박치기'];
         this.type = '풀';
-        this.cost = function() {
-            return 400;
-        }
     }
 }
 
